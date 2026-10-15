@@ -430,6 +430,40 @@ private:
     /// 主日志器
     Logger::ptr m_root;
 
-}
+};
+
+/**
+ * @brief 输出到控制台的Appender
+ */
+class StdoutLogAppender : public LogAppender {
+public:
+    typedef std::shared_ptr<StdoutLogAppender> ptr;
+    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
+    std::string toYamlString() override;
+};
+
+/**
+ * @brief 输出到文件的Appender
+ */
+class FileLogAppender : public LogAppender {
+public:
+    typedef std::shared_ptr<FileLogAppender> ptr;
+    FileLogAppender(const std::string& filename);
+    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
+    std::string toYamlString() override;
+
+    /**
+     * @brief 重新打开日志文件
+     * @return 成功返回true
+     */
+    bool reopen();
+private:
+    /// 文件路径
+    std::string m_filename;
+    /// 文件流
+    std::ofstream m_filestream;
+    /// 上次重新打开时间
+    uint64_t m_lastTime = 0;
+};
 
 }
