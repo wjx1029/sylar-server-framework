@@ -195,7 +195,15 @@ public:
      */
     LogFormatter(const std::string& pattern);
 
-
+    /**
+     * @brief 返回格式化日志文本
+     * @param[in] logger 日志器
+     * @param[in] level 日志级别
+     * @param[in] event 日志事件
+     */
+    std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
+    std::ostream& format(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
+    
 public:
     /**
      * @brief 日志内容项格式化
