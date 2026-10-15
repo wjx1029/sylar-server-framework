@@ -6,6 +6,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include "singleton.h"
 
 
 namespace sean 
@@ -203,7 +204,7 @@ public:
      */
     std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
     std::ostream& format(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
-    
+
 public:
     /**
      * @brief 日志内容项格式化
@@ -248,5 +249,72 @@ private:
     /// 是否有错误
     bool m_error = false;
 };
+
+/**
+ * @brief 日志输出目标
+ */
+class LogAppender {
+friend class Logger;
+public:
+    typedef std::shared_ptr<LogAppender> ptr;
+    typedef Spinlock MutexType;
+
+    typedef std::shared_ptr<LogAppender> ptr;
+    typedef Spinlock MutexType;
+
+    /**
+     * @brief 析构函数
+     */
+    virtual ~LogAppender() {}
+
+    /**
+     * @brief 写入日志
+     * @param[in] logger 日志器
+     * @param[in] level 日志级别
+     * @param[in] event 日志事件
+     */
+    virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
+
+    /**
+     * @brief 将日志输出目标的配置转成YAML String
+     */
+    virtual std::string toYamlString() = 0;
+
+    /**
+     * @brief 更改日志格式器
+     */
+    void setFormatter(LogFormatter::ptr val);
+
+    /**
+     * @brief 获取日志格式器
+     */
+    LogFormatter::ptr getFormatter();
+
+    /**
+     * @brief 获取日志级别
+     */
+    LogLevel::Level getLevel() const { return m_level;}
+
+    /**
+     * @brief 设置日志级别
+     */
+    void setLevel(LogLevel::Level val) { m_level = val;}
+
+protected:
+    /// 日志级别
+    LogLevel::Level m_level = LogLevel::DEBUG;
+    /// 是否有自己的日志格式器
+    bool m_hasFormatter = false;
+    /// Mutex
+    MutexType m_mutex;
+    /// 日志格式器
+    LogFormatter::ptr m_formatter;
+
+};
+
+/**
+ * @brief 日志器
+ */
+class 
 
 }
