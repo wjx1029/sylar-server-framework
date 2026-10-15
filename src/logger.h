@@ -466,4 +466,47 @@ private:
     uint64_t m_lastTime = 0;
 };
 
+/**
+ * @brief 日志器管理类
+ */
+class LoggerManager {
+public:
+    typedef Spinlock MutexType;
+    /**
+     * @brief 构造函数
+     */
+    LoggerManager();
+
+    /**
+     * @brief 获取日志器
+     * @param[in] name 日志器名称
+     */
+    Logger::ptr getLogger(const std::string& name);
+
+    /**
+     * @brief 初始化
+     */
+    void init();
+
+    /**
+     * @brief 返回主日志器
+     */
+    Logger::ptr getRoot() const { return m_root;}
+
+    /**
+     * @brief 将所有的日志器配置转成YAML String
+     */
+    std::string toYamlString();
+private:
+    /// Mutex
+    MutexType m_mutex;
+    /// 日志器容器
+    std::map<std::string, Logger::ptr> m_loggers;
+    /// 主日志器
+    Logger::ptr m_root;
+};
+
+/// 日志器管理类单例模式
+typedef sylar::Singleton<LoggerManager> LoggerMgr;
+
 }
