@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <list>
+#include <vector>
 
 
 namespace sean 
@@ -54,6 +55,7 @@ public:
 class LogEvent {
 public:
     typedef std::shared_ptr<LogEvent> ptr;
+
     /**
      * @brief 构造函数
      * @param[in] logger 日志器
@@ -163,6 +165,80 @@ private:
     std::shared_ptr<Logger> m_logger;
     /// 日志等级
     LogLevel::Level m_level;
+};
+
+/**
+ * @brief 日志格式化
+ */
+class LogFormatter {
+public:
+    typedef std::shared_ptr<LogFormatter> ptr;
+
+    /**
+     * @brief 构造函数
+     * @param[in] pattern 格式模板
+     * @details 
+     *  %m 消息
+     *  %p 日志级别
+     *  %r 累计毫秒数
+     *  %c 日志名称
+     *  %t 线程id
+     *  %n 换行
+     *  %d 时间
+     *  %f 文件名
+     *  %l 行号
+     *  %T 制表符
+     *  %F 协程id
+     *  %N 线程名称
+     *
+     *  默认格式 "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
+     */
+    LogFormatter(const std::string& pattern);
+
+
+public:
+    /**
+     * @brief 日志内容项格式化
+     */
+    class FormatItem {
+    public:
+        typedef std::shared_ptr<FormatItem> ptr;
+        /**
+         * @brief 析构函数
+         */
+        virtual ~FormatItem() {}
+        /**
+         * @brief 格式化日志到流
+         * @param[in, out] os 日志输出流
+         * @param[in] logger 日志器
+         * @param[in] level 日志等级
+         * @param[in] event 日志事件
+         */
+        virtual void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
+    };
+
+    /**
+     * @brief 初始化, 解析日志模块
+     */
+    void init();
+
+    /**
+     * @brief 检查是否有错
+     */
+    bool isError() const { return m_error; }
+
+    /**
+     * @brief 返回日志模板
+     */
+    const std::string getPattern() const { return m_pattern; }
+
+private:
+    /// 日志格式模板
+    std::string m_pattern;
+    /// 日志格式解析后格式
+    std::vector<FormatItem::ptr> m_items;
+    /// 是否有错误
+    bool m_error = false;
 };
 
 }
