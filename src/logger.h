@@ -169,6 +169,39 @@ private:
 };
 
 /**
+ * @brief 日志事件包装器
+ */
+class LogEventWrap {
+public:
+
+    /**
+     * @brief 构造函数
+     * @param[in] e 日志事件
+     */
+    LogEventWrap(LogEvent::ptr e);
+
+    /**
+     * @brief 析构函数
+     */
+    ~LogEventWrap();
+
+    /**
+     * @brief 获取日志事件
+     */
+    LogEvent::ptr getEvent() const { return m_event;}
+
+    /**
+     * @brief 获取日志内容流
+     */
+    std::stringstream& getSS();
+private:
+    /**
+     * @brief 日志事件
+     */
+    LogEvent::ptr m_event;
+};
+
+/**
  * @brief 日志格式化
  */
 class LogFormatter {
