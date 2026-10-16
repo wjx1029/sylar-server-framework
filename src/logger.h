@@ -417,9 +417,9 @@ public:
     std::string toYamlString();
 
 private:
-    /// 日志名称
+    /// 日志器名称
     std::string m_name;
-    /// 日志级别
+    /// 日志器级别
     LogLevel::Level m_level;
     /// Mutex
     MutexType m_mutex;
